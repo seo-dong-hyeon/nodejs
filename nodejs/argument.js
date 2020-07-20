@@ -7,3 +7,5 @@ if(args[2] === 'a'){
 else{
     console.log('B');
 }
+
+console.log("args",args[2]);

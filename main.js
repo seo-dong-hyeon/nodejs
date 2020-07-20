@@ -9,6 +9,7 @@ var app = http.createServer(function(request,response){
     var title = queryData.id;
     
     console.log(url.parse(_url,true));
+    console.log(title);
   
     if(pathname === '/'){
       fs.readdir('./data', function(error, filelist){
@@ -27,7 +28,6 @@ var app = http.createServer(function(request,response){
             list = list + `<li><a href="/?id=${filelist[index]}">${filelist[index]}</a></li>`;
           }
           list += '</ol>';
-          console.log(list);
 
           var template = `
           <!doctype html>
