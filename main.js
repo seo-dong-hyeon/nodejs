@@ -60,7 +60,7 @@ var app = http.createServer(function(request,response){
         title = "Web-create";
         description = `<form action="http://localhost:3000/create_process" method="POST">
          <p><input type="text" name="title" placeholder="title"></p>
-         <textarea name="desciption" placeholder="descriptions"></textarea>
+         <textarea name="description" placeholder="descriptions"></textarea>
          <input type="submit">
          </form>`;
 
@@ -79,12 +79,14 @@ var app = http.createServer(function(request,response){
 
       request.on('end',function(){
         var ps = qs.parse(body);
-        console.log(ps);
-      });
+        const { title, description } = ps;
 
-      response.writeHead(200);
-      response.end('success');
-      
+        // 파일 저장 성공 시 callback 호출
+        fs.writeFile(`./data/${title}`,description,'utf8',function(err){
+          response.writeHead(302, {Location: `/?id=${title}`}); // redirection
+          response.end(); 
+        })
+      });
     }
     else{
       response.writeHead(404);
