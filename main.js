@@ -50,7 +50,12 @@ var app = http.createServer(function(request,response){
             control = `<a href="/create">create</a>`;
           }
           else{
-            control = `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`;
+            control = `<a href="/create">create</a> 
+              <a href="/update?id=${title}">update</a>
+              <form action="delete_process" method="POST">
+                <input type="hidden" name="id" value=${title}>
+                <input type="submit" value="delete">
+              </form> `;
           }
         
           var list = templateList(filelist);
@@ -97,7 +102,6 @@ var app = http.createServer(function(request,response){
     else if(pathname === '/update'){
       fs.readdir('./data', function(error, filelist){
         fs.readFile(`data/${title}`,'utf8',function(err,description){
-          console.log(description);
           input_description = `<form action="/update_process" method="POST">
             <input type="hidden" name="id" value="${title}"> 
             <p><input type="text" name="title" placeholder="title" value="${title}"></p>
@@ -105,7 +109,12 @@ var app = http.createServer(function(request,response){
             <input type="submit">
             </form>`;
             
-            var control = `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`;
+            var control = `<a href="/create">create</a> 
+             <a href="/update?id=${title}">update</a>
+             <form action="delete_process" method="POST">
+               <input type="hidden" name="id" value=${title}>
+               <input type="submit" value="delete">
+             </form> `;
             var list = templateList(filelist);
             var template = templateHTML(title, list, input_description, control);
 
@@ -130,6 +139,23 @@ var app = http.createServer(function(request,response){
             response.writeHead(302, {Location: `/?id=${title}`}); 
             response.end(); 
           });
+        });
+      });
+    }
+    else if(pathname === '/delete_process'){
+      console.log("here");
+      var body = '';
+      request.on('data',function(data){
+        body = body + data;
+      });
+
+      request.on('end',function(){
+        var ps = qs.parse(body);
+        const { id } = ps;
+
+        fs.unlink(`./data/${id}`, function(err){
+          response.writeHead(302, {Location: '/'}); 
+          response.end(); 
         });
       });
     }
